@@ -5,7 +5,7 @@ const productController = require('../../controllers/product.controller')
 
 const router = express.Router()
 
-router.get('/search/:searchKey', productController.search)
+router.get('/search/:keyword', productController.search)
 
 router.get('/draft', productController.getDraft)
 router.get('/published', productController.getPublished)

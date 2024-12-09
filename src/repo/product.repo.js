@@ -1,8 +1,9 @@
 'use strict'
 
 const { Schema } = require('mongoose')
-const { product } = require("../../models/product.model")
-const { BadRequestError } = require('../../core/error.response')
+const { product } = require("../models/product.model")
+const { BadRequestError } = require('../core/error.response')
+const { getSelectData, getUnselectData } = require('../utils')
 
 const getProductById = async (id, condition = {}) => {
     return await product.findOne({
@@ -57,8 +58,19 @@ const draftProduct = async ({
     return modifiedCount
 }
 
-const getAllProducts = async ({ query, limit, skip }) => {
-    return await product.find(query).limit(limit).skip(skip).select()
+const getOneProduct = async (id, unselect) => {
+    return await product.findOne({
+        _id: Schema.ObjectId(id),
+        isPublished: true
+    }).select(getUnselectData(unselect)).lean()
+}
+
+const getAllProducts = async ({ limit, sort, page, filter, select }) => {
+    const skip = (page - 1) * limit
+    const sortBy = sort === 'ctime' ? { _id: -1 } : { _id: 1 }
+    const products = await product.find(filter).sort(sortBy).skip(skip).limit(limit).select(getSelectData(select)).lean()
+
+    return products
 }
 
 const searchProductsByKeyword = async (keyword) => {
@@ -78,6 +90,17 @@ const searchProductsByKeyword = async (keyword) => {
     return products
 }
 
+const updateProductById = async ({
+    product_id,
+    dataUpdate,
+    model,
+    isNew = true
+}) => {
+    return await model.findByIdAndUpdate(product_id, dataUpdate, {
+        new: isNew
+    })
+}
+
 module.exports = {
     getProductById,
     getProductsPublished,
@@ -85,5 +108,7 @@ module.exports = {
     publishProduct,
     draftProduct,
     getAllProducts,
-    searchProductsByKeyword
+    getOneProduct,
+    searchProductsByKeyword, 
+    updateProductById
 }

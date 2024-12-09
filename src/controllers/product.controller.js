@@ -1,28 +1,73 @@
 'use strict'
-const { CREATED } = require('../core/success.response')
+const { CREATED, SuccessResponse } = require('../core/success.response')
+const { getProductsDraft } = require('../repo/product')
 const ProductService = require('../services/product.service')
 
 class ProductController {
     createProduct = async (req, res, next) => {
         new CREATED({
             message: 'Create success',
-            metadata: await ProductService.createProduct(req.body.type, req.body)
+            metadata: await ProductService.createProduct(req.body.type, { ...req.body, shop: req.user.userId })
         }).send(res)
     }
 
-    getAll = async (req, res, next) => { }
+    updateProduct = async(req,res,next) => {
+        new SuccessResponse({
+            message: 'Update product', 
+            metadata: await ProductService.updateProduct(req.body.type, req.params.id, {
+                ...req.body, 
+                shop: req.user.userId
+            })
+        })
+    }
 
-    getOne = async (req, res, next) => { }
+    getAll = async (req, res, next) => {
+        new SuccessResponse({
+            message: 'Products response',
+            metadata: await ProductService.getAllProduct(req.query)
+        }).send(res)
+    }
 
-    getDraft = async (req, res, next) => { }
+    getOne = async (req, res, next) => {
+        new SuccessResponse({
+            message: `Product detail ${req.params.id}`,
+            metadata: await ProductService.getOne(req.params.id)
+        }).send(res)
+    }
 
-    getPublished = async (req, res, next) => { }
+    getDraft = async (req, res, next) => {
+        new SuccessResponse({
+            message: 'Product draft list',
+            metadata: await ProductService.getProductsDraft(req.user.userId, req.params)
+        }).send(res)
+    }
 
-    published = async (req, res, next) => { }
+    getPublished = async (req, res, next) => {
+        new SuccessResponse({
+            message: 'Products published',
+            metadata: await ProductService.getProductsPublished(req.user.userId, req.params)
+        }).send(res)
+    }
 
-    unPublished = async (req, res, next) => { }
+    published = async (req, res, next) => {
+        new SuccessResponse({
+            message: 'Published product successfully',
+            metadata: await ProductService.publishedProduct(req.user.userId, req.params.id),
+        }).send(res)
+    }
 
-    search = async (req, res, next) => { }
+    unPublished = async (req, res, next) => {
+        new SuccessResponse({
+            message: 'Unpublished product successfully',
+            metadata: await ProductService.unPublishedProduct(req.user.userId, req.params.id),
+        }).send(res)
+    }
+
+    search = async (req, res, next) => {
+        new SuccessResponse({
+            metadata: await ProductService.searchProduct(req.params.keyword)
+        }).send(res)
+    }
 
 }
 
