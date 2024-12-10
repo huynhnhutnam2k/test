@@ -1,9 +1,9 @@
 'use strict'
 
-const { product, clothing, electronic, furniture } = require("../models/product.model")
-const { BadRequestError, ForbiddenError } = require('../core/error.response')
+const { product, clothing, electronic } = require("../models/product.model")
+const { BadRequestError } = require('../core/error.response')
 const { searchProductsByKeyword, getProductsDraft, getOneProduct, getProductsPublished, publishProduct, draftProduct, getAllProducts, updateProductById } = require("../repo/product.repo")
-const { getSelectData, removeFalselyObject, updateNestedObjectParser } = require("../utils")
+const { removeFalselyObject, updateNestedObjectParser } = require("../utils")
 
 class ProductFactory {
     /**

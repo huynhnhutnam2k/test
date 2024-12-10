@@ -1,6 +1,5 @@
 'use strict'
 const { CREATED, SuccessResponse } = require('../core/success.response')
-const { getProductsDraft } = require('../repo/product')
 const ProductService = require('../services/product.service')
 
 class ProductController {
