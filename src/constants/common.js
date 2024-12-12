@@ -694,6 +694,7 @@ const HEADER = {
   API_KEY: "x-api-key",
   CLIENT_ID: "x-client-id",
   AUTHORIZATION: "authorization",
+  AUTH: 'auth'
 };
 
 module.exports = { ROLE, STATUS, STATUS_CODE, REASON_STATUS_CODE, HEADER };

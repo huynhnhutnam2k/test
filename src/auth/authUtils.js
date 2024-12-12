@@ -8,29 +8,27 @@ const KeyTokenService = require("../services/keyToken.service");
 
 const createTokenPair = async (payload, publicKey, privateKey) => {
   try {
-    const accessToken = await jwt.sign(payload, privateKey, {
-      algorithm: "RS256",
+    const accessToken = await jwt.sign(payload, process.env.SECRET_KEY, {
       expiresIn: "2 days",
     });
 
-    const refreshToken = await jwt.sign(payload, privateKey, {
-      algorithm: "RS256",
+    const refreshToken = await jwt.sign(payload, process.env.SECRET_KEY, {
+      // algorithm: "RS256",
       expiresIn: "7 days",
     });
 
-    jwt.verify(accessToken, publicKey, (err, decode) => {
+    jwt.verify(accessToken, process.env.SECRET_KEY, (err, decode) => {
       if (err) {
-        console.log("Error verify");
+        console.log("Error verify", err);
       }
-
-      console.log({ decode });
     });
-
     return {
       accessToken,
       refreshToken,
     };
-  } catch (error) { }
+  } catch (error) {
+    console.log(error)
+  }
 };
 
 const authentication = asyncHandler(async (req, res, next) => {
@@ -44,7 +42,6 @@ const authentication = asyncHandler(async (req, res, next) => {
    */
 
   const userId = req.headers[HEADER.CLIENT_ID]
-
   if (!userId) throw new AuthFailureError('Invalid request')
 
   const keyStore = await KeyTokenService.findByUserId(userId)
@@ -54,9 +51,9 @@ const authentication = asyncHandler(async (req, res, next) => {
   if (!accessToken) throw new AuthFailureError('Invalid request')
 
   try {
-    const decodeUser = jwt.verify(accessToken, keyStore.publicKey)
-
-    if (userId !== decodeUser.userId) {
+    const token = accessToken.split(' ')[1]
+    const decodeUser = jwt.verify(token, process.env.SECRET_KEY)
+    if (userId !== decodeUser?.userId) {
       throw new AuthFailureError('Invalid userID')
     }
 

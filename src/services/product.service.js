@@ -27,10 +27,9 @@ class ProductFactory {
         //     default:
         //         throw new BadRequestError('Invalid product type ')
         // }
-
+        console.log(type)
         const productClass = this.productRegistry[type]
         if (!productClass) throw new BadRequestError('Type invalid')
-
         return new productClass(payload)
     }
 
@@ -132,9 +131,9 @@ class Product {
         const newProduct = await product.create({ ...this, _id: product_id })
         if (newProduct) {
             await insertInventory({
-                productId: product_id, 
-                shopId: this.shop, 
-                stock: this.quantity, 
+                productId: product_id,
+                shopId: this.shop,
+                stock: this.quantity,
             })
         }
 
@@ -157,7 +156,6 @@ class Clothing extends Product {
     async createProduct() {
         const newClothing = await clothing.create({ ...this.attributes, shop: this.shop })
         if (!newClothing) throw new BadRequestError('create new clothing error')
-
         const newProduct = await super.createProduct(newClothing._id)
         if (!newProduct) {
             throw new BadRequestError('create new product error')

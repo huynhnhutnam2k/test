@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const {
   db: { host, name, port },
 } = require("../configs/config.mongodb");
-const connectStr = `mongodb+srv://hnam11102k:M7Q413w9cEhNgriv@cluster0.j68pz.mongodb.net/?retryWrites=true&w=majority`;
+const connectStr = process.env.MONGODB_URL;
 class Database {
   constructor() {
     this.connect();

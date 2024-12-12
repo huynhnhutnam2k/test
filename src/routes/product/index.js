@@ -2,9 +2,11 @@
 
 const express = require('express')
 const productController = require('../../controllers/product.controller')
+const { authentication } = require('../../auth/authUtils')
 
 const router = express.Router()
 
+router.use(authentication)
 router.get('/search/:keyword', productController.search)
 
 router.get('/draft', productController.getDraft)

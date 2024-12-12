@@ -3,6 +3,8 @@ const { default: helmet } = require("helmet");
 const compression = require("compression");
 const express = require("express");
 const app = express();
+const dotenv = require('dotenv')
+dotenv.config()
 
 //#region init middlewares
 app.use(morgan("dev"));
@@ -24,11 +26,13 @@ require("./dbs/init.mongodb");
 app.use("/", require("./routes"));
 //#endregion
 
+
 app.use((req, res, next) => {
   const error = new Error("Error");
   error.status = 404;
   next(error);
 });
+
 
 app.use((error, req, res, next) => {
   const statusCode = error.status || 500;
@@ -39,5 +43,6 @@ app.use((error, req, res, next) => {
     message,
   });
 });
+
 
 module.exports = app;
