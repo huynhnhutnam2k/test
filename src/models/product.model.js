@@ -33,7 +33,7 @@ const productSchema = new Schema({
 
     shop: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'Shop'
     },
     attributes: {
         type: Schema.Types.Mixed,
@@ -73,10 +73,10 @@ const productSchema = new Schema({
 
 productSchema.index(['name description', 'text'])
 
-productSchema.pre('save', (next) => {
-    this.slug = slugify(this.name, { lower: true })
-    next()
-})
+productSchema.pre('save', function(next) {
+    this.slug = slugify(this.name.toString, { lower: true });
+    next();
+});
 
 const clothingSchema = new Schema({
     brand: {

@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-    collection: "User",
+    collection: "Shops",
   }
 );
 
@@ -53,7 +53,7 @@ const collaboratorSchema = new mongoose.Schema({
 });
 
 module.exports = {
-  user: mongoose.model("Users", userSchema),
+  user: mongoose.model("Shop", userSchema),
   collaborator: mongoose.model("Collaborators", collaboratorSchema),
 };
 

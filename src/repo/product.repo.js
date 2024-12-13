@@ -1,15 +1,15 @@
 'use strict'
 
-const { Schema } = require('mongoose')
+const { Schema, Types } = require('mongoose')
 const { product } = require("../models/product.model")
 const { BadRequestError } = require('../core/error.response')
-const { getSelectData, getUnselectData } = require('../utils')
+const { getSelectData, getUnselectData, convertToObjectIdMongodb } = require('../utils')
 
 const getProductById = async (id, condition = {}) => {
     return await product.findOne({
-        _id: Schema.Types.ObjectId(id),
+        _id: convertToObjectIdMongodb(id),
         ...condition
-    })
+    }).lean()
 }
 
 const getProductsPublished = async ({ query, limit, skip }) => {
@@ -25,9 +25,8 @@ const publishProduct = async ({
     id
 }) => {
     const foundProduct = await getProductById(id, {
-        shop: Schema.Types.ObjectId(shop)
+        shop
     })
-
     if (!foundProduct) {
         throw new BadRequestError('Cant find product')
     }
