@@ -4,6 +4,7 @@ const { NotFoundError, BadRequestError } = require("../core/error.response")
 const { findCartById } = require("../repo/cart.repo")
 const { checkProductByServer } = require("../repo/product.repo")
 const { getDiscountAmount } = require("./discount.service")
+const { acquireLock, releaseLock } = require("./redis.service")
 
 class CheckoutService {
     // {
@@ -99,9 +100,24 @@ class CheckoutService {
         // pessimistic locks: Khóa bi quan
         // optimistic locks: Khóa lạc quan
 
+        const acquireLocks = []
         for (let i = 0; i < products.length; i++) {
             const { quantity, productId } = products[i]
+
+            const keyLock = await acquireLock({ productId, quantity, cartId})
+            acquireLocks.push(!!keyLock)
+            if (keyLock) {
+                await releaseLock(keyLock)
+            }
         }
+
+        // check if have a product out of stock
+        if (acquireLocks.includes(false)) {
+            throw new BadRequestError('Something wrong happened')
+        }
+
+        const newOrder = await order.create()
+        return newOrder
     }
 }
 

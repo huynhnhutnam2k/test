@@ -38,7 +38,7 @@ const authentication = asyncHandler(async (req, res, next) => {
      * 3. verify token
      * 4. check user in database
      * 5. check key store with this user id
-     * 6. success all -> return next()
+     * 6. passed all -> return next()
      */
 
     const userId = req.headers[HEADER.CLIENT_ID];

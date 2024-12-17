@@ -16,15 +16,14 @@ const acquireLock = async ({ productId, quantity, cartId }) => {
     for (let i = 0; i < retryTimes; i++) {
         // create key:  who can pay
         const result = await setNXAsync(key, expireTime);
-
-        console.log(result);
-
+        
         if (result === 1) {
             const isReservation = await reservationInventory({
                 productId,
                 cartId,
                 quantity
             })
+            
             if (isReservation.modifiedCount) {
                 await pExpire(key, expireTime)
                 return key

@@ -8,6 +8,7 @@ const router = express.Router()
 
 router.get('/', productController.getAll)
 router.get('/search/:keyword', productController.search)
+
 router.use(authentication)
 
 router.get('/draft', productController.getDraft)
